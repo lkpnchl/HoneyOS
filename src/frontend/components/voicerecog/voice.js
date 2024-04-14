@@ -20,13 +20,9 @@ const useSpeechRecognition = () => {
 
     recognition.onresult = (event) => {
       console.log("result: ", event)
+      setTranscript(event.results[0][0].transcript)
       recognition.stop()
       setListening(false)
-
-      recognition.onerror = (event) => {
-        console.error("Speech recognition error", event.error);
-      };
-      
     }
   }, [])
 

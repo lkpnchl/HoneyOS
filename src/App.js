@@ -25,9 +25,9 @@ function App() {
 						<Routes>
 							<Route path="/" 
 								element={<Navigate 
-								to={isLoggedIn ? "/desktop" : "/boot"} />} />
+								to={isLoggedIn ? "/desktop" : "/desktop"} />} />
 							<Route path="/boot" 
-									element={<BootApp onLogin={handleLogin} />} />
+									element={<Desktop onLogin={handleLogin} />} />
 							<Route path="/desktop" 
 								element={<Desktop/>} />
 						</Routes>

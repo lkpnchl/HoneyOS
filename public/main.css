@@ -20,8 +20,8 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Honey Jar Free Trial', sans-serif !important;
 }
 
-.bg-gradient {
-  background: var(--gradient);
+  .bg-gradient {
+    background: var(--gradient);
 }
 
 p {
@@ -44,6 +44,7 @@ p {
     font-size: 1.75rem !important;
     font-weight: 300 !important;
     line-height: 1.2 !important;
+    color: #324A5F !important;
   }
   
   h4 {

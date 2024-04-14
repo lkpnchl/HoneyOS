@@ -18,17 +18,21 @@ export const VoiceRecog = () => {
             <Button onClick={startListening} variant="destructive">Start</Button>
           </div>
 
-          <div> 
-            {/* Voice automatically stops when we stop speaking for temporary usage */}
+          <div>
             <Button onClick={stopListening}>Stop</Button>
           </div>
 
-          {isListening ? 
+          {isListening ? (
             <div> 
               App is listening 
+              {console.log("Listening")}
             </div>
-            : null}
-          {transcript}
+          ) : (
+            <>
+              {console.log("StopListening")}
+            </>
+          )}
+          <h3>{transcript}</h3>
         </>
       ) : (
         <div> 

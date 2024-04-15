@@ -1,6 +1,6 @@
 const { contextBridge } = require("electron")
-const usersDB = require("../models/test")
-const setupFileManagementRoutes = require("../models/userModel")
+const usersDB = require("../models/userModel")
+const setupFileManagementRoutes = require("../models/test")
 
 contextBridge.exposeInMainWorld("sqlite", {
   usersDB,

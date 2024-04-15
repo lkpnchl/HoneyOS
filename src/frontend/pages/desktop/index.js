@@ -7,6 +7,7 @@ import {
 import { Button } from '../../components/ui/button'
 import { Label } from '../../components/ui/label'
 import styles from './desktop.module.css'
+import { VoiceRecog } from '../../components/voiceRecog';
 
 export const Desktop = ({ }) => {
 
@@ -31,7 +32,8 @@ export const Desktop = ({ }) => {
       </aside>
     </div>
     <div className={`items-center justify-center pb-12 mb-12`}>
-      <Label className={`${styles.welcomeText} pt-4`}> Display Something here</Label>
+      <Label className={`${styles.welcomeText} pt-4`}> Speech to Text </Label>
+        <VoiceRecog />
       <Label className={`${styles.welcomeText} pt-4`}> Desktop Area</Label>
     </div>
     </>

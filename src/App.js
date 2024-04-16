@@ -1,3 +1,4 @@
+// app.js
 import { useEffect, useState } from "react"
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation} from "react-router-dom"
 import "./App.css"
@@ -18,7 +19,6 @@ function App() {
 		setIsLoggedIn(false)
 	};
 	
-
 	return (
 		<>
 			{/* <div className='background'> */}

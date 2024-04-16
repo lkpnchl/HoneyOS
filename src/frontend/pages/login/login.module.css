@@ -1,4 +1,4 @@
-body{
+/* body{
   display: flex;
   justify-content: center;
   align-items: center;
@@ -21,19 +21,17 @@ body{
 .userIcon {
   width: 150px;
   height: 150px;
-  top: 0.7px;
+  transform: translateY(-20%);
+  transform: translateX(380%);
+  padding: 10px;
   border: 3px solid rgb(255, 255, 255);
   border-radius: 50%;
-  justify-content: space-between;
   align-items: center;
   position: sticky;
 }
-.welcome-text {
+.welcomeText {
   color: rgb(255, 255, 255);
-  font-family: 'Helvetica Now Display Regular', sans-serif !important; 
-  font-size: 200px;
-  padding: 500px;
-  margin: 30px;
+  font-family: 'Work Sans'!important; 
 }
 .input-group {
   display: flex;
@@ -58,4 +56,41 @@ body{
 .error {
   color: #ff0000; 
   font-family: 'Work Sans', sans-serif;
+} */
+
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-image: url('../../assets/img/login_bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat; 
+}
+
+.loginContainer {
+  text-align: center;
+}
+
+.userIcon {
+  width: 200px;
+  height: 200px;
+  border: 5px solid rgb(255, 251, 184);
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  position: sticky
+}
+
+.welcomeText{
+  color: #ffffff;
+  font-family: 'Honey Jar Free Trial', sans-serif !important;
+  font-size: larger;
+}
+
+.error{
+  font-family: 'Work Sans', sans-serif !important;
 }

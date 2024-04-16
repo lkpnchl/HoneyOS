@@ -24,7 +24,7 @@ export const BootApp = () => {
   }, []);
 
   const nextPage = async () => {
-    history('/login')
+    history('/desktop')
   }
 
   return (

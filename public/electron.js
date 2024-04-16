@@ -10,7 +10,7 @@ function createWindow() {
 		height: 720,
 		frame: false, 
 		center: true,
-		resizable: false,
+		resizable: true,
 		maximizable: true,
 		icon: path.join(__dirname, "./logo.ico"),
 		webPreferences: {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import userIcon from "../../assets/img/user.png"
 import styles from './login.module.css'; 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Mic } from 'lucide-react';
 import { Button } from '../../components/ui/button'
 

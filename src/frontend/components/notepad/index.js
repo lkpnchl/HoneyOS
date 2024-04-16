@@ -4,7 +4,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "../ui/button"; // Import necessary components
-import NotepadDialog from "./notepad"; // Import the dialog component
+import NotepadDialog from "./Notepad.js"; // Import the dialog component
 import notepadIcon from "../../assets/img/notepad icon.png";
 
 function Notepad() {
@@ -27,7 +27,7 @@ function Notepad() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button onClick={handleAddDialog}>
+        <Button cariant="ghost" onClick={handleAddDialog}>
           <img src={notepadIcon} alt="notepad-icon" height="100" width="100" />
         </Button>
       </DialogTrigger>

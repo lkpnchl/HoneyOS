@@ -90,7 +90,7 @@ function runServer() {
 app.whenReady().then(() => {
     // runServer(); // Start Express server
 	createSplashScreen();
-	setTimeout(createWindow, 1000); // Change delay as needed
+	setTimeout(createWindow, 500); // Change delay as needed
 });
 
 app.on("window-all-closed", () => {

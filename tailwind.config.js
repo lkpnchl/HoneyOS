@@ -18,6 +18,7 @@ module.exports = {
       sans: ['Honey Jar Free Trial', 'sans-serif'],
       sans: ['Work Sans', 'sans-serif'],
       sans: ['One Little Font Regular', 'sans-serif'],
+      sans: ['Helvetica Now Display Regular', 'sans-serif'],
     },
     extend: {
       colors: {

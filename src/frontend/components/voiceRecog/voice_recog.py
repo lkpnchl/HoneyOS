@@ -77,7 +77,7 @@ if __name__ == "__main__":
 #                 transcript = recognizer.recognize_vox(audio)
 #                 return transcript
 
-#         except sr.RequestError as e:
+#          except sr.RequestError as e:
 #             print("Request Error Occurred: {0}".format(e))
 #             return
 
@@ -89,4 +89,4 @@ if __name__ == "__main__":
 #     print("Listening for speech. Say 'Terminate' to stop.")
 #     record_transcript_vosk()
 
-# # --------------
+# --------------

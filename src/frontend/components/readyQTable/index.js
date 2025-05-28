@@ -35,17 +35,17 @@ function ReadyQTable({ simulation, selectedAlgo }) {
         .filter(item => item.status === "Ready" || item.status === "Running")
         .map((item, index) => (
           <TableRow key={index} className={item.status === "Running" ? "sticky z-49 top-[35.5px] font-bold text-amber-950 bg-yellow-300 rowTb" : "rowTb"}>
-            <TableCell className="text-center">{item.id}</TableCell>
-            <TableCell>{item.burst}</TableCell>
-            <TableCell>{item.arrivalTime}</TableCell>
-            <TableCell className="text-center w-10">{item.memory} MB</TableCell>
+            <TableCell className="text-center text-white">{item.id}</TableCell>
+            <TableCell className="text-center text-white">{item.burst}</TableCell>
+            <TableCell className="text-center text-white">{item.arrivalTime}</TableCell>
+            <TableCell className="text-center text-white">{item.memory} MB</TableCell>
             {selectedAlgo === "p" ? (   
-                <TableCell className="text-center text-slate-950 font-bold w-1/8">{item.priority}</TableCell> 
+                <TableCell className="text-center text-white font-bold w-1/8">{item.priority}</TableCell> 
                 ): 
                 null}
-            <TableCell className="text-center">{item.status}</TableCell> {/* New, Ready, Running, Waiting, Suspended, Terminated */}
-            <TableCell className="text-center">{item.remaining}</TableCell>
-            <TableCell className="text-center">{item.percent}</TableCell>
+            <TableCell className="text-center text-white">{item.status}</TableCell> {/* New, Ready, Running, Waiting, Suspended, Terminated */}
+            <TableCell className="text-center text-white">{item.remaining}</TableCell>
+            <TableCell className="text-center text-white">{item.percent}</TableCell>
           </TableRow>
         ))}
     </TableBody>

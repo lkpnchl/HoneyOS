@@ -5,7 +5,6 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button"; // Import necessary components
 import NotepadDialog from "./Notepad.js"; // Import the dialog component
-import notepadIcon from "../../assets/img/notepad icon.png";
 
 export function Notepad() {
   const [dialogCount, setDialogCount] = useState(1);
@@ -38,11 +37,6 @@ export function Notepad() {
   );
 }
 
-
-// Notepad.js
-
-// Notepad.js
-
 export const openNotepad = () => {
   // Find and click the Notepad button
   const notepadButton = document.getElementById('notepad-button');
@@ -51,6 +45,14 @@ export const openNotepad = () => {
   } else {
     console.error('Notepad button not found');
   }
+};
+
+export const closeNotepad = () => {
+  console.log('[Notepad] Attempting to close notepad dialog...');
+  const closeEvent = new CustomEvent('notepad-command', { 
+    detail: 'COMMAND:CLOSE_NOTEPAD'
+  });
+  window.dispatchEvent(closeEvent);
 };
 
 

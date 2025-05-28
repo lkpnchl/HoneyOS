@@ -1,0 +1,338 @@
+.replacementPage {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: #0a0020;
+  border-radius: 0.5rem;
+  border: 1px solid #E6B800;
+  position: relative;
+}
+
+.controlPanel {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.configCard, .statsCard, .simulationCard, .algorithmInfo {
+  background-color: #12003a;
+  border-radius: 0.5rem;
+  border: 1px solid #a020f0;
+  overflow: hidden;
+  box-shadow: 0 0 16px #00f0ff44;
+}
+
+.configCard {
+  grid-column: 1;
+  box-shadow: 0 0 16px #00f0ff44;
+}
+
+.simulationPanel {
+  grid-column: 2;
+}
+
+.statsCard {
+  grid-column: 3;
+  box-shadow: 0 0 16px #ff00ea44;
+}
+
+.cardHeader {
+  background-color: #00f0ff;
+  color: #fff;
+  padding: 0.75rem;
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 1px solid #a020f0;
+  text-shadow: 0 0 8px #00f0ff, 0 0 16px #00f0ff;
+}
+
+.cardContent {
+  padding: 1rem;
+}
+
+.configItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.configItem label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #00f0ff;
+  text-shadow: 0 0 4px #00f0ff;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.startButton {
+  background-color: #39ff14;
+  color: #0a0020;
+  transition: background-color 0.2s;
+  width: 100%;
+  padding: 0.75rem;
+  font-weight: bold;
+  box-shadow: 0 0 8px #39ff14, 0 0 16px #39ff14;
+}
+
+.startButton:hover {
+  background-color: #00ffae;
+  box-shadow: 0 0 16px #00ffae;
+}
+
+.pauseButton, .stepButton, .resetButton {
+  background-color: #1a003a;
+  color: #00f0ff;
+  border: 1px solid #a020f0;
+  transition: background-color 0.2s;
+  box-shadow: 0 0 8px #a020f0;
+}
+
+.pauseButton:hover, .stepButton:hover, .resetButton:hover {
+  background-color: #2a005a;
+}
+
+.algoButton {
+  background-color: #12003a;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  border: 1px solid #ff00ea;
+  margin-bottom: 0.5rem;
+  font-weight: normal;
+  transition: all 0.2s;
+  color: #ff00ea;
+  cursor: pointer;
+  box-shadow: 0 0 8px #ff00ea44;
+}
+
+.algoButton.selected {
+  background-color: #ff00ea;
+  font-weight: bold;
+  color: #fff;
+  box-shadow: 0 0 16px #ff00ea;
+}
+
+.algoButton:hover {
+  background-color: #a020f0;
+  color: #fff;
+  box-shadow: 0 0 16px #a020f0;
+}
+
+.statItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background-color: #1a003a;
+  border-radius: 0.25rem;
+  border: 1px solid #00f0ff;
+  color: #fff;
+  box-shadow: 0 0 8px #00f0ff44;
+}
+
+.faultCount {
+  color: #ff00ea;
+  font-weight: 600;
+  text-shadow: 0 0 4px #ff00ea;
+}
+
+.hitCount {
+  color: #39ff14;
+  font-weight: 600;
+  text-shadow: 0 0 4px #39ff14;
+}
+
+.hitRate {
+  color: #00f0ff;
+  font-weight: 600;
+  text-shadow: 0 0 4px #00f0ff;
+}
+
+.simulationDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.simulationCard {
+  flex-grow: 1;
+  box-shadow: 0 0 16px #a020f0;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100% - 8rem);
+  overflow: hidden;
+  background-color: #12003a;
+}
+
+.scrollArea {
+  height: 100%;
+  overflow: auto;
+  padding: 0.5rem;
+  background-color: #1a003a;
+}
+
+.framesContainer {
+  width: 100%;
+  border-collapse: collapse;
+  display: table;
+  table-layout: fixed;
+  background-color: #1a003a;
+}
+
+.frameHeaders {
+  display: table-row;
+  background-color: #00f0ff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 1px 0 #00f0ff;
+}
+
+.frameHeader {
+  display: table-cell;
+  padding: 0.75rem 0.5rem;
+  font-weight: 600;
+  text-align: center;
+  color: #0a0020;
+  border-right: 1px solid #a020f0;
+}
+
+.frameHeader:last-child {
+  width: 120px;
+}
+
+.frameHeader:nth-last-child(2) {
+  width: 100px;
+}
+
+.frameRows {
+  display: table-row-group;
+}
+
+.frameRow {
+  display: table-row;
+  border-bottom: 1px solid #a020f0;
+}
+
+.frameRow:nth-child(even) {
+  background-color: #2a005a;
+}
+
+.frameCell, .referenceCell, .resultCell {
+  display: table-cell;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  vertical-align: middle;
+  border-right: 1px solid #a020f0;
+}
+
+.referenceCell {
+  background-color: #a020f0;
+  font-weight: 600;
+  color: #fff;
+}
+
+.fault {
+  background-color: #ff00ea44;
+  color: #ff00ea;
+  text-shadow: 0 0 4px #ff00ea;
+}
+
+.hit {
+  background-color: #39ff1444;
+  color: #39ff14;
+  text-shadow: 0 0 4px #39ff14;
+}
+
+.mostRecent {
+  background-color: #00f0ff44;
+  border-left: 3px solid #00f0ff;
+}
+
+.currentStep {
+  background-color: #a020f044;
+}
+
+.algorithmInfo {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #12003a;
+  border: 1px solid #00f0ff;
+  box-shadow: 0 0 8px #00f0ff44;
+}
+
+.algorithmInfo h3 {
+  margin-bottom: 0.5rem;
+  color: #00f0ff;
+  text-align: center;
+  text-shadow: 0 0 4px #00f0ff;
+}
+
+.algorithmInfo p {
+  color: #fff;
+}
+
+.memoryVisualizer {
+  border: 1px solid #00f0ff;
+  border-radius: 0.5rem;
+  height: 150px;
+  background-color: #1a003a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+  position: relative;
+  box-shadow: 0 0 8px #00f0ff44;
+}
+
+.memoryText {
+  text-align: center;
+  font-size: 1.25rem;
+  color: #00f0ff;
+  text-shadow: 0 0 4px #00f0ff;
+}
+
+.memoryUsage {
+  text-align: center;
+  color: #ff00ea;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  text-shadow: 0 0 4px #ff00ea;
+}
+
+.quantumControl {
+  padding: 0.5rem;
+  margin-top: 1rem;
+  background-color: #00f0ff44;
+  border-radius: 0.25rem;
+  border: 1px dashed #00f0ff;
+}
+
+.quantumControl label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #00f0ff;
+}
+
+.tableContainer {
+  max-height: 600px;
+  overflow-y: auto;
+  border: 1px solid #a020f0;
+  margin: 0;
+  border-top: none;
+  background-color: #1a003a;
+} 

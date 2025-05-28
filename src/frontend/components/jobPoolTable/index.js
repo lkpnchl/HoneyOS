@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Table,
   TableHead,
@@ -7,7 +7,6 @@ import {
   TableCell,
   TableHeader,
 } from "../../components/ui/table";
-import styles from "./pcb.module.css";
 import { ScrollArea } from "../../components/ui/scroll-area";
 
 function JobPoolTable({ simulation, selectedAlgo }) {
@@ -40,12 +39,12 @@ function JobPoolTable({ simulation, selectedAlgo }) {
                             })
                         .filter(item => item.status === "Waiting" || item.status === "Waiting For Memory" || item.status === "New")
                         .map((item, index) => (
-                            <TableRow key={index}>
-                                <TableCell>{item.id}</TableCell>
-                                <TableCell>{item.burst}</TableCell>
-                                <TableCell>{item.arrivalTime}</TableCell>
-                                <TableCell>{item.memory} MB</TableCell>
-                                <TableCell>{item.status}</TableCell>
+                            <TableRow className="text-white" key={index}>
+                                <TableCell className="text-white">{item.id}</TableCell>
+                                <TableCell className="text-white">{item.burst}</TableCell>
+                                <TableCell className="text-white">{item.arrivalTime}</TableCell>
+                                <TableCell className="text-white">{item.memory} MB</TableCell>
+                                <TableCell className="text-white">{item.status}</TableCell>
                             </TableRow>
                         )))}
                     </TableBody>
@@ -74,12 +73,12 @@ function JobPoolTable({ simulation, selectedAlgo }) {
                         .filter(item => item.status === "Waiting" || item.status === "Waiting For Memory" || item.status === "New")
                         .map((item, index) => (
                             <TableRow key={index}>
-                                <TableCell>{item.id}</TableCell>
-                                <TableCell>{item.burst}</TableCell>
-                                <TableCell>{item.arrivalTime}</TableCell>
-                                <TableCell>{item.memory} MB</TableCell>
-                                <TableCell>{selectedAlgo === 'p' && item.priority}</TableCell>
-                                <TableCell>{item.status}</TableCell>
+                                <TableCell className="text-white">{item.id}</TableCell>
+                                <TableCell className="text-white">{item.burst}</TableCell>
+                                <TableCell className="text-white">{item.arrivalTime}</TableCell>
+                                <TableCell className="text-white">{item.memory} MB</TableCell>
+                                <TableCell className="text-white">{selectedAlgo === 'p' && item.priority}</TableCell>
+                                <TableCell className="text-white">{item.status}</TableCell>
                             </TableRow>
                         )))}
                     </TableBody>

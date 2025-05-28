@@ -1,0 +1,33 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="neonGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00f0ff" />
+      <stop offset="40%" stop-color="#a020f0" />
+      <stop offset="70%" stop-color="#ff00ea" />
+      <stop offset="100%" stop-color="#000000" />
+    </radialGradient>
+    <filter id="glow" x="0" y="0" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#neonGlow)" />
+  <!-- Neon Glow Circles -->
+  <circle cx="960" cy="540" r="200" fill="none" stroke="#00f0ff" stroke-width="40" opacity="0.5"/>
+  <circle cx="960" cy="540" r="350" fill="none" stroke="#ff00ea" stroke-width="40" opacity="0.3"/>
+  <circle cx="960" cy="540" r="500" fill="none" stroke="#a020f0" stroke-width="40" opacity="0.2"/>
+  <!-- Bee Silhouette (simple, neon white) -->
+  <g filter="url(#glow)">
+    <ellipse cx="960" cy="540" rx="40" ry="50" fill="#fff" opacity="0.95"/>
+    <ellipse cx="960" cy="520" rx="60" ry="20" fill="#fff" opacity="0.8"/>
+    <ellipse cx="940" cy="540" rx="10" ry="20" fill="#fff" opacity="0.8"/>
+    <ellipse cx="980" cy="540" rx="10" ry="20" fill="#fff" opacity="0.8"/>
+    <ellipse cx="950" cy="500" rx="6" ry="10" fill="#fff" opacity="0.8"/>
+    <ellipse cx="970" cy="500" rx="6" ry="10" fill="#fff" opacity="0.8"/>
+    <circle cx="950" cy="490" r="4" fill="#fff" opacity="0.8"/>
+    <circle cx="970" cy="490" r="4" fill="#fff" opacity="0.8"/>
+  </g>
+</svg> 

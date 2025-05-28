@@ -1,11 +1,12 @@
 .bodyBackground {
-  background-image: url('./lockscreen_bg.png');
+  background-image: url('./lockscreen_bg.svg');
   background-size: cover;
   height: 100vh;
 }
 
 .currentTime {
-  color: #f4f4f4;
+  color: #00ff00;
+  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
   font-family: 'One Little Font Regular', sans-serif !important;
   font-size: 70px;
   position: absolute;
@@ -14,7 +15,8 @@
 }
 
 .currentDate {
-  color: #f4f4f4;
+  color: #00ffff;
+  text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
   font-family: 'Helvetica Now Display Regular', sans-serif !important;
   font-size: 22px;
   position: absolute;
@@ -23,7 +25,8 @@
 }
 
 .welcomeText{
-  color: #f4f4f4;
+  color: #ff00ff;
+  text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
   font-family: 'Helvetica Now Display Regular', sans-serif !important;
 }
 

@@ -1,22 +1,19 @@
 import styles from "./notepad.module.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Draggable from "react-draggable";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
   DialogClose,
 } from "../../components/ui/dialog";
 import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
-import { Copy, FolderOpenDot, FolderOpen, Save, SaveAll } from "lucide-react";
-import notepadIcon from "../../assets/img/buzzpad.png";import {
+import { FolderOpenDot, FolderOpen, Save, SaveAll } from "lucide-react";
+import notepadIcon from "../../assets/img/buzzpad.svg";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -25,16 +22,47 @@ import notepadIcon from "../../assets/img/buzzpad.png";import {
 
 function Notepad() {
   const [dialogCount, setDialogCount] = useState(1);
-  const [dialogStates, setDialogStates] = useState(Array.from({ length: 1 }, () => true));
-
+  const [dialogVisible, setDialogVisible] = useState(false);
   const [fileContent, setFileContent] = useState("");
   const [isModified, setIsModified] = useState(false);
-  const [isSaved, setIsSaved] = useState(true); // Track whether the file has been saved
+  const [isSaved, setIsSaved] = useState(true);
   const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
+
+  // Add effect to listen for voice commands
+  useEffect(() => {
+    const handleVoiceCommand = (event) => {
+      console.log('[Notepad] Received event:', event);
+      if (event.detail === "COMMAND:CLOSE_NOTEPAD") {
+        console.log('[Notepad] Closing notepad dialog...');
+        handleClose();
+      }
+    };
+
+    window.addEventListener('notepad-command', handleVoiceCommand);
+    return () => window.removeEventListener('notepad-command', handleVoiceCommand);
+  }, []);
+
+  const handleClose = () => {
+    if (isModified && !isSaved) {
+      const confirmClose = window.confirm("You have unsaved changes. Are you sure you want to close the file?");
+      if (confirmClose) {
+        closeDialog();
+      }
+    } else {
+      closeDialog();
+    }
+  };
+
+  const closeDialog = () => {
+    setDialogVisible(false);
+    setDialogCount(1);
+    setFileContent("");
+    setIsModified(false);
+    setIsSaved(true);
+  };
 
   const handleOpenNewFile = () => {
     setDialogCount(prevCount => prevCount + 1);
-    setDialogStates(prevStates => [...prevStates, true]);
   };
 
   const handleOpenExistingFile = () => {
@@ -111,121 +139,102 @@ function Notepad() {
 
   };
 
-  const handleCloseFile = () => {
-    if (isModified && !isSaved) {
-      const confirmClose = window.confirm("You have unsaved changes. Are you sure you want to close the file?");
-      if (confirmClose) {
-        // Reset content and modification state
-        setFileContent("");
-        setIsModified(false);
-        setIsSaved(true);
-      }
-    } else {
-      // No unsaved changes, close the file directly
-      setFileContent("");
-      setIsModified(false);
-      setIsSaved(true);
-    }
-  };
-
-  const handleCloseDialog = (index) => {
-    setDialogStates(prevStates => {
-      const newStates = [...prevStates];
-      newStates[index] = false;
-      return newStates;
-    });
-  }
-
-
   const renderDialogContent = () => {
     const dialogContentArray = [];
     for (let i = 0; i < dialogCount; i++) {
       dialogContentArray.push(
         <>
           <Draggable handle=".dialog-title" positionOffset={{ x: '-50%', y: '-55%' }}>
-            <DialogContent key={i} className="w-9/12 h-5/6 flex" style={{ position: 'fixed', top: '50', left: '50' }}>
+            <DialogContent key={i} className="w-9/12 h-5/6 flex bg-[#12003a] border-2 border-[#00f0ff] shadow-[0_0_16px_#00f0ff]" style={{ position: 'fixed', top: '50', left: '50' }}>
               <div className="w-1/4">
                 <DialogHeader className="dialog-title">
-                  <DialogTitle className="text-s">BuzzNote</DialogTitle>
+                  <DialogTitle className="text-white" style={{ textShadow: '0 0 8px #00f0ff, 0 0 16px #00f0ff' }}>BuzzNote</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col">
                   <div className="mb-2">
                     <Button
                       style={{
-                        color: "black",
+                        color: "#00f0ff",
                         width: "200px",
                         height: "40px",
                         textAlign: "left",
                         display: "block",
                         marginBottom: "8px",
+                        background: "#1a003a",
+                        border: "1.5px solid #00f0ff",
+                        boxShadow: "0 0 8px #00f0ff44"
                       }}
                       onClick={handleOpenNewFile}
                     >
-                      <FolderOpen className="mr-2 h-4 w-4 inline-block align-middle" />{" "}
-                      New
+                      <FolderOpen className="mr-2 h-4 w-4 inline-block align-middle text-[#00f0ff]" /> New
                     </Button>
                   </div>
                   <div className="mb-2">
                     <Button
                       style={{
-                        color: "black",
+                        color: "#00f0ff",
                         width: "200px",
                         height: "40px",
                         textAlign: "left",
                         display: "block",
                         marginBottom: "8px",
+                        background: "#1a003a",
+                        border: "1.5px solid #00f0ff",
+                        boxShadow: "0 0 8px #00f0ff44"
                       }}
                       onClick={handleOpenExistingFile}
                     >
-                      <FolderOpenDot className="mr-2 h-4 w-4 inline-block align-middle" />{" "}
-                      Open
+                      <FolderOpenDot className="mr-2 h-4 w-4 inline-block align-middle text-[#00f0ff]" /> Open
                     </Button>
                   </div>
                   <div className="mb-2">
                     <Button
                       style={{
-                        color: "black",
+                        color: "#00f0ff",
                         width: "200px",
                         height: "40px",
                         textAlign: "left",
                         display: "block",
                         marginBottom: "8px",
+                        background: "#1a003a",
+                        border: "1.5px solid #00f0ff",
+                        boxShadow: "0 0 8px #00f0ff44"
                       }}
                       onClick={handleSaveNewFile}
                     >
-                      <Save className="mr-2 h-4 w-4 inline-block align-middle" />
-                      Save
+                      <Save className="mr-2 h-4 w-4 inline-block align-middle text-[#00f0ff]" /> Save
                     </Button>
-
                   </div>
                   <div className="mb-2">
                     <Button
                       style={{
-                        color: "black",
+                        color: "#00f0ff",
                         width: "200px",
                         height: "40px",
                         textAlign: "left",
                         display: "block",
                         marginBottom: "8px",
+                        background: "#1a003a",
+                        border: "1.5px solid #00f0ff",
+                        boxShadow: "0 0 8px #00f0ff44"
                       }}
                       onClick={handleSaveExistingFile}
-                      disabled={saveButtonDisabled} // Disable the button when saveButtonDisabled is true
+                      disabled={saveButtonDisabled}
                     >
-                      <SaveAll className="mr-2 h-4 w-4 inline-block align-middle" />{" "}
-                      Save as
+                      <SaveAll className="mr-2 h-4 w-4 inline-block align-middle text-[#00f0ff]" /> Save as
                     </Button>
                   </div>
                 </div>
               </div>
               <div className="w-full">
                 <Textarea
-                  className="mt-8 flex-grow"
+                  className="mt-8 flex-grow text-white bg-[#1a003a] border border-[#00f0ff] focus:ring-2 focus:ring-[#00f0ff] placeholder:text-[#00f0ff99]"
                   placeholder="Type your message here."
                   value={fileContent}
                   onChange={handleChange}
                 />
                 <div className="flex justify-end">
-                  <Button className="mt-4 text-black" onClick={handleCloseFile}>Close</Button>
+                  <Button className="mt-4 text-[#00f0ff] bg-[#1a003a] border border-[#00f0ff]" onClick={handleClose}>Close</Button>
                 </div>
               </div>
             </DialogContent>
@@ -238,7 +247,7 @@ function Notepad() {
 
   return (
     <TooltipProvider>
-      <Dialog>
+      <Dialog open={dialogVisible} onOpenChange={setDialogVisible}>
         <DialogTrigger asChild>
           <div className="relative">
             <Tooltip>
@@ -249,7 +258,7 @@ function Notepad() {
                   icon="icon"
                   className={`${styles.appIconButton} transparent`}
                 >
-                  <img src={notepadIcon} alt="notepad-icon"/>
+                  <img src={notepadIcon} alt="BuzzNote"/>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -263,4 +272,14 @@ function Notepad() {
     </TooltipProvider>
   );
 }
+
+export const closeNotepad = () => {
+  console.log('[Notepad] Attempting to close notepad dialog...');
+  const notepadButton = document.getElementById('notepad-button');
+  if (notepadButton) {
+    const closeEvent = new CustomEvent('message', { data: 'COMMAND:CLOSE_NOTEPAD' });
+    window.dispatchEvent(closeEvent);
+  }
+};
+
 export default Notepad;

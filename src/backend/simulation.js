@@ -3,17 +3,18 @@ import { MemoryManager } from './memory';
 
 // Simulation class
 export class Simulation {
-  constructor(algorithm, jobs, totalMemory) {
+  constructor(algorithm, jobs, totalMemory, usePredefinedJobs = false) {
     this.time = 0; // Current time
     this.algorithm = algorithm; // Scheduling algorithm
-    this.jobs = jobs; // Array of jobs
+    this.jobs = usePredefinedJobs ? Job.createPredefinedJobs() : jobs; // Array of jobs (use predefined or passed jobs)
     this.readyQueue = []; // Queue of ready jobs
     this.currentJob = undefined; // Currently running job
     this.ganttChart = []; // Gantt chart for visualization
     this.idleTime = 0; // Total idle time
     this.totalMemory = totalMemory; // Total memory available
     this.memoryManager = new MemoryManager(totalMemory); // Memory manager
-    this.stopAddingJobsFlag = false; // Flag to stop adding new jobs
+    this.stopAddingJobsFlag = true; // Flag to stop adding new jobs (default true for predefined jobs)
+    this.usePredefinedJobs = usePredefinedJobs; // Whether to use predefined jobs
 
     // Initialize all jobs with status "New"
     this.jobs.forEach(job => job.setStatus("New"));
@@ -25,14 +26,16 @@ export class Simulation {
 
     this.time++; // Increment the current time
 
-    // Add new jobs dynamically every few time units
-    if (!this.stopAddingJobsFlag && this.time % 3 === 0) {
+    // Add new jobs dynamically every few time units (only if not using predefined jobs)
+    if (!this.usePredefinedJobs && !this.stopAddingJobsFlag && this.time % 3 === 0) {
       this.addNewJob();
     }
 
     if (this.currentJob && this.currentJob.finished) {
       // Deallocate memory when a job is terminated
-      this.memoryManager.deallocateMemory(this.currentJob);
+      if (this.currentJob.status !== "Waiting For Memory") {
+        this.memoryManager.deallocateMemory(this.currentJob);
+      }
       this.currentJob = undefined;
     }
 
@@ -79,7 +82,7 @@ export class Simulation {
     this.updateJobStatuses();
   }
 
-  // Add a new job to the simulation
+  // Add a new job to the simulation (only used if not using predefined jobs)
   addNewJob() {
     const newJobId = this.jobs.length + 1;
     const newJob = Job.createRandomJob(newJobId);
@@ -94,13 +97,15 @@ export class Simulation {
         job.setStatus("Terminated");
       } else if (this.currentJob === job) {
         job.setStatus("Running");
-      } else if (job === this.readyQueue[0]) { // Check if the job is the first in the ready queue
+      } else if (this.readyQueue.includes(job)) {
         job.setStatus("Ready");
       } else if (job.status === "Waiting For Memory" && this.memoryManager.allocateMemory(job)) {
         job.setStatus("Ready");
         this.readyQueue.push(job);
+      } else if (job.arrivalTime > this.time) {
+        job.setStatus("New");
       } else {
-        job.setStatus("Waiting for Memory");
+        job.setStatus("Waiting For Memory");
       }
     });
     
@@ -128,7 +133,13 @@ export class Simulation {
     this.currentJob = undefined; // Clear the current job
     this.ganttChart = []; // Clear the gantt chart
     this.idleTime = 0; // Reset the idle time
-    this.stopAddingJobsFlag = false; // Reset the flag
+    
+    // If using predefined jobs, we don't want to add new jobs dynamically
+    if (this.usePredefinedJobs) {
+      this.stopAddingJobsFlag = true;
+    } else {
+      this.stopAddingJobsFlag = false;
+    }
 
     // Reset all job statuses to "New"
     this.jobs.forEach(job => job.setStatus("New"));
@@ -144,12 +155,47 @@ export class Simulation {
     this.stopAddingJobsFlag = true;
   }
 
+  // Use predefined jobs instead of random ones
+  usePredefined() {
+    this.jobs = Job.createPredefinedJobs();
+    this.usePredefinedJobs = true;
+    this.stopAddingJobsFlag = true;
+    this.jobs.forEach(job => job.setStatus("New"));
+  }
+
+  // Use random jobs
+  useRandom() {
+    // Reset with a single initial job
+    this.jobs = [Job.createRandomJob(1)];
+    this.usePredefinedJobs = false;
+    this.stopAddingJobsFlag = false;
+    this.jobs.forEach(job => job.setStatus("New"));
+  }
+
   // Finish the simulation by executing all remaining steps
   finish() {
     this.stopAddingJobs();
+    
+    // First run all jobs normally until completion
     while (!this.isFinished()) {
       this.nextStep();
     }
+    
+    // Force cleanup of any remaining job memory allocations
+    // This ensures memory is completely deallocated at the end
+    this.jobs.forEach(job => {
+      if (job.status !== "Terminated") {
+        job.setStatus("Terminated");
+      }
+      this.memoryManager.deallocateMemory(job);
+    });
+    
+    // Reset memory to initial state
+    this.memoryManager.resetMemory();
+    
+    // Clear the ready queue
+    this.readyQueue = [];
+    this.currentJob = undefined;
   }
 
   // Get the text representation of the current job

@@ -1,88 +1,125 @@
 const express = require('express');
-const app = express();
-const { spawn } = require('child_process');
+const expressWs = require('express-ws');
 const cors = require('cors');
-const async = require('async');
-const expressWs = require('express-ws')(app); // Initialize express-ws
+const { spawn } = require('child_process');
+const path = require('path');
+
+const app = express();
+expressWs(app);
 
 app.use(cors());
-app.use(express.text()); // Parse request body as text
+app.use(express.json());
 
-app.use((req, res, next) => {
-    console.log(`Received ${req.method} request at ${req.path}`);
-    next();
-});
+let pythonProcess = null;
+let initializationTimeout = null;
 
-const PORT = 3000;
+function killPythonProcess() {
+    if (pythonProcess) {
+        console.log('[DEBUG] Killing existing Python process');
+        pythonProcess.kill();
+        pythonProcess = null;
+    }
+    if (initializationTimeout) {
+        clearTimeout(initializationTimeout);
+        initializationTimeout = null;
+    }
+}
 
-// Create a queue to process Python scripts sequentially
-const pythonQueue = async.queue((task, callback) => {
-    const { pythonScriptPath, res, data } = task;
+function logWithTimestamp(message) {
+    const now = new Date().toISOString();
+    console.log(`[${now}] ${message}`);
+}
 
-    const pythonProcess = spawn('python', [pythonScriptPath]);
+// Voice recognition endpoint
+app.post('/desktop', (req, res) => {
+    logWithTimestamp('[DEBUG] Voice recognition endpoint hit');
+    
+    // Set up SSE (Server-Sent Events)
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
 
-    let scriptOutput = '';
+    // Kill any existing Python process
+    killPythonProcess();
 
+    const scriptPath = path.join(__dirname, 'voice_recog.py');
+    logWithTimestamp(`[DEBUG] Starting Python script at: ${scriptPath}`);
+
+    // Start the Python voice recognition script
+    const startPython = Date.now();
+    pythonProcess = spawn('python', [scriptPath]);
+    logWithTimestamp(`[DEBUG] Python process spawned with PID: ${pythonProcess.pid}`);
+
+    // Set a timeout for initialization
+    initializationTimeout = setTimeout(() => {
+        logWithTimestamp('[DEBUG] Voice recognition initialization timeout after 2 minutes');
+        res.write('ERROR:Initialization timeout after 2 minutes\n');
+        killPythonProcess();
+    }, 120000); // 2 minutes timeout
+
+    let isInitialized = false;
+    let pythonReadyTime = null;
+
+    // Handle Python script output
     pythonProcess.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`);
-        scriptOutput += data.toString();
-        res.write(scriptOutput); // Write the output to the response stream
+        const output = data.toString();
+        logWithTimestamp(`[DEBUG] Python output: ${output.trim()}`);
+        
+        // Check for initialization success
+        if (output.includes('SYSTEM:READY')) {
+            pythonReadyTime = Date.now();
+            logWithTimestamp(`[DEBUG] Voice recognition system ready (startup time: ${(pythonReadyTime - startPython) / 1000}s)`);
+            isInitialized = true;
+            if (initializationTimeout) {
+                clearTimeout(initializationTimeout);
+                initializationTimeout = null;
+            }
+        }
+        
+        res.write(output);
     });
 
     pythonProcess.stderr.on('data', (data) => {
-        console.error(`stderr: ${data}`);
-        res.status(500).send("Error in Python script execution.");
-    });
-
-    pythonProcess.on('exit', (code) => {
-        console.log(`Python process exited with code ${code}`);
-        if (code === 0) {
-            res.end(); // End the response stream
+        const error = data.toString();
+        logWithTimestamp(`[DEBUG] Python stderr: ${error.trim()}`);
+        // Only treat as fatal if it looks like a real error
+        if (!isInitialized && (error.includes('Traceback') || error.toLowerCase().includes('error') || error.toLowerCase().includes('exception'))) {
+            res.write(`ERROR:${error}\n`);
+            logWithTimestamp('[DEBUG] Error during initialization');
+            killPythonProcess();
         } else {
-            res.status(500).send(`Python script exited with code ${code}`);
+            // Just log normal Kaldi/Vosk output
+            res.write(`LOG:${error}\n`);
         }
-        callback(); // Signal that the task is complete
     });
 
-    // Pass the data to the Python script via stdin
-    pythonProcess.stdin.write(JSON.stringify(data));
-    pythonProcess.stdin.end();
-}, 1); // Limit concurrency to 1, so only one script runs at a time
-
-// Define route handler for POST request to '/desktop'
-app.post('/desktop', (req, res) => {
-    const pythonScriptPath = 'src/frontend/components/voiceRecog/voice_recog.py';
-    const data = req.body; // Get the string data from the request body
-
-    // Set up response as a stream
-    res.writeHead(200, {
-        'Content-Type': 'text/plain',
-        'Transfer-Encoding': 'chunked'
+    // Handle Python process errors
+    pythonProcess.on('error', (error) => {
+        logWithTimestamp(`[DEBUG] Failed to start Python process: ${error}`);
+        res.write(`ERROR:Failed to start Python process: ${error.message}\n`);
+        killPythonProcess();
     });
 
-    // Add the task to the queue
-    pythonQueue.push({ pythonScriptPath, res, data }, (err) => {
-        if (err) {
-            console.error('Error processing Python script:', err);
-            res.status(500).send('Internal server error');
-        }
+    // Handle client disconnect
+    req.on('close', () => {
+        logWithTimestamp('[DEBUG] Client disconnected');
+        killPythonProcess();
+    });
+
+    // Handle Python process exit
+    pythonProcess.on('close', (code) => {
+        logWithTimestamp(`[DEBUG] Python process exited with code ${code}`);
+        res.write('SYSTEM:STOPPED\n');
+        killPythonProcess();
     });
 });
 
-// WebSocket endpoint
-app.ws('/ws', (ws, req) => {
-    console.log('WebSocket connection established');
-    
-    // Handle WebSocket messages
-    ws.on('message', (message) => {
-        console.log(`Received message from client: ${message}`);
-        
-        // Echo the message back to the client
-        ws.send(`Server received: ${message}`);
-    });
-});
-
-// Start the server
-const server = app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+// Start server on a random available port
+const server = app.listen(0, () => {
+    const port = server.address().port;
+    logWithTimestamp(`[DEBUG] Voice recognition server running on port ${port}`);
+    // Send port number to Electron main process
+    if (process.send) {
+        process.send({ type: 'PORT', port });
+    }
 });

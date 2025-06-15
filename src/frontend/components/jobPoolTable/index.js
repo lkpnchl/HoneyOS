@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Table,
   TableHead,
@@ -7,7 +7,6 @@ import {
   TableCell,
   TableHeader,
 } from "../../components/ui/table";
-import styles from "./pcb.module.css";
 import { ScrollArea } from "../../components/ui/scroll-area";
 
 function JobPoolTable({ simulation, selectedAlgo }) {

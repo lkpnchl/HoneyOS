@@ -1,5 +1,3 @@
-import {floor} from "lodash";
-
 export function firstInFirstOut(referenceString, frameNumber) {
     let pageInMem = [];
     let pageFaults = [];

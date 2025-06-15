@@ -1,22 +1,19 @@
 import styles from "./notepad.module.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Draggable from "react-draggable";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
   DialogClose,
 } from "../../components/ui/dialog";
 import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
-import { Copy, FolderOpenDot, FolderOpen, Save, SaveAll } from "lucide-react";
-import notepadIcon from "../../assets/img/buzzpad.png";import {
+import { FolderOpenDot, FolderOpen, Save, SaveAll } from "lucide-react";
+import notepadIcon from "../../assets/img/buzzpad.png";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -25,16 +22,47 @@ import notepadIcon from "../../assets/img/buzzpad.png";import {
 
 function Notepad() {
   const [dialogCount, setDialogCount] = useState(1);
-  const [dialogStates, setDialogStates] = useState(Array.from({ length: 1 }, () => true));
-
+  const [dialogVisible, setDialogVisible] = useState(false);
   const [fileContent, setFileContent] = useState("");
   const [isModified, setIsModified] = useState(false);
-  const [isSaved, setIsSaved] = useState(true); // Track whether the file has been saved
+  const [isSaved, setIsSaved] = useState(true);
   const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
+
+  // Add effect to listen for voice commands
+  useEffect(() => {
+    const handleVoiceCommand = (event) => {
+      console.log('[Notepad] Received event:', event);
+      if (event.detail === "COMMAND:CLOSE_NOTEPAD") {
+        console.log('[Notepad] Closing notepad dialog...');
+        handleClose();
+      }
+    };
+
+    window.addEventListener('notepad-command', handleVoiceCommand);
+    return () => window.removeEventListener('notepad-command', handleVoiceCommand);
+  }, []);
+
+  const handleClose = () => {
+    if (isModified && !isSaved) {
+      const confirmClose = window.confirm("You have unsaved changes. Are you sure you want to close the file?");
+      if (confirmClose) {
+        closeDialog();
+      }
+    } else {
+      closeDialog();
+    }
+  };
+
+  const closeDialog = () => {
+    setDialogVisible(false);
+    setDialogCount(1);
+    setFileContent("");
+    setIsModified(false);
+    setIsSaved(true);
+  };
 
   const handleOpenNewFile = () => {
     setDialogCount(prevCount => prevCount + 1);
-    setDialogStates(prevStates => [...prevStates, true]);
   };
 
   const handleOpenExistingFile = () => {
@@ -110,32 +138,6 @@ function Notepad() {
     setSaveButtonDisabled(false); // Enable the Save button when content changes
 
   };
-
-  const handleCloseFile = () => {
-    if (isModified && !isSaved) {
-      const confirmClose = window.confirm("You have unsaved changes. Are you sure you want to close the file?");
-      if (confirmClose) {
-        // Reset content and modification state
-        setFileContent("");
-        setIsModified(false);
-        setIsSaved(true);
-      }
-    } else {
-      // No unsaved changes, close the file directly
-      setFileContent("");
-      setIsModified(false);
-      setIsSaved(true);
-    }
-  };
-
-  const handleCloseDialog = (index) => {
-    setDialogStates(prevStates => {
-      const newStates = [...prevStates];
-      newStates[index] = false;
-      return newStates;
-    });
-  }
-
 
   const renderDialogContent = () => {
     const dialogContentArray = [];
@@ -225,7 +227,9 @@ function Notepad() {
                   onChange={handleChange}
                 />
                 <div className="flex justify-end">
-                  <Button className="mt-4 text-black" onClick={handleCloseFile}>Close</Button>
+                  <DialogClose asChild>
+                    <Button className="mt-4 text-black" onClick={handleClose}>Close</Button>
+                  </DialogClose>
                 </div>
               </div>
             </DialogContent>
@@ -238,7 +242,7 @@ function Notepad() {
 
   return (
     <TooltipProvider>
-      <Dialog>
+      <Dialog open={dialogVisible} onOpenChange={setDialogVisible}>
         <DialogTrigger asChild>
           <div className="relative">
             <Tooltip>
@@ -249,7 +253,7 @@ function Notepad() {
                   icon="icon"
                   className={`${styles.appIconButton} transparent`}
                 >
-                  <img src={notepadIcon} alt="notepad-icon"/>
+                  <img src={notepadIcon} alt="BuzzNote"/>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -263,4 +267,14 @@ function Notepad() {
     </TooltipProvider>
   );
 }
+
+export const closeNotepad = () => {
+  console.log('[Notepad] Attempting to close notepad dialog...');
+  const notepadButton = document.getElementById('notepad-button');
+  if (notepadButton) {
+    const closeEvent = new CustomEvent('message', { data: 'COMMAND:CLOSE_NOTEPAD' });
+    window.dispatchEvent(closeEvent);
+  }
+};
+
 export default Notepad;

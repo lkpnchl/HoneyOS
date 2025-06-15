@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import _ from "lodash";
-import Fade from "react-reveal/Fade";
+import { motion } from "framer-motion";
 import {
   Table,
   TableBody,
@@ -126,13 +126,17 @@ export default class TableVM extends Component {
                 ))}
               </TableCell>
               <TableCell>
-                <Fade right>
+              <motion.div
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
                   {pageFaults[currentIndex] === "F" ? (
                     <span style={{ color: "#FF0000" }}>{pageFaults[currentIndex]}</span>
                   ) : (
                     <span style={{ color: "#006400" }}>{pageFaults[currentIndex]}</span>
                   )}
-                </Fade>
+                </motion.div>
               </TableCell>
             </TableRow>
           </TableBody>

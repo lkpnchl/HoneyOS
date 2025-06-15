@@ -58,6 +58,24 @@ export class Job {
     return new Job(jobId, arriveTime, burst, priority, memory);
   }
 
+  // Create a set of predefined jobs for simulation
+  static createPredefinedJobs() {
+    const predefinedJobs = [
+      new Job(1, 0, 4, 3, 64),    // Job 1: arrives at 0, burst=4, priority=3, memory=64MB
+      new Job(2, 1, 8, 1, 128),   // Job 2: arrives at 1, burst=8, priority=1, memory=128MB
+      new Job(3, 2, 3, 2, 96),    // Job 3: arrives at 2, burst=3, priority=2, memory=96MB
+      new Job(4, 3, 6, 4, 256),   // Job 4: arrives at 3, burst=6, priority=4, memory=256MB
+      new Job(5, 4, 5, 5, 32),    // Job 5: arrives at 4, burst=5, priority=5, memory=32MB
+      new Job(6, 6, 2, 6, 64),    // Job 6: arrives at 6, burst=2, priority=6, memory=64MB
+      new Job(7, 8, 9, 7, 512),   // Job 7: arrives at 8, burst=9, priority=7, memory=512MB
+      new Job(8, 9, 3, 8, 128),   // Job 8: arrives at 9, burst=3, priority=8, memory=128MB
+      new Job(9, 10, 7, 2, 256),  // Job 9: arrives at 10, burst=7, priority=2, memory=256MB
+      new Job(10, 12, 4, 1, 64)   // Job 10: arrives at 12, burst=4, priority=1, memory=64MB
+    ];
+    
+    return predefinedJobs;
+  }
+
   // Check if the job has started
   get started() {
     return this.burst !== this.remaining;
@@ -149,7 +167,7 @@ export class Job {
 
   // Compare jobs by memory
   compareByMemory(other) {
-    const tmp = this.priority - other.priority;
+    const tmp = this.memory - other.memory;
     return tmp === 0 ? this.compareById(other) : tmp;
   }
 

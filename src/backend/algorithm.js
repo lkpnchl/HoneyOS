@@ -1,5 +1,3 @@
-import { Job } from './job';
-
 export class Algorithm {
   constructor() {
     this.isPreemptive = false; // Flag to determine if the algorithm is preemptive or not
@@ -74,5 +72,8 @@ export class RoundRobin extends Algorithm {
     } else {
       readyQueue.unshift(currentJob); // Put the current job back to the front of the queue
     }
+    
+    // Apply the queue ordering after adding the current job back
+    return this.orderQueue(readyQueue);
   }
 }

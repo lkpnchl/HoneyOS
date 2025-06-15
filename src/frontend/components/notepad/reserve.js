@@ -1,26 +1,19 @@
-import styles from "./notepad.module.css";
 import React, { useState } from "react";
 import Draggable from "react-draggable";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
-import { Copy, FolderOpenDot, FolderOpen, Save, SaveAll } from "lucide-react";
+import { FolderOpenDot, FolderOpen, Save, SaveAll } from "lucide-react";
 import notepadIcon from "../../assets/img/notepad icon.png";
 
 function Notepad() {
   const [dialogCount, setDialogCount] = useState(1);
-  const [dialogStates, setDialogStates] = useState(Array.from({ length: 1 }, () => true));
 
   const [fileContent, setFileContent] = useState("");
   const [isModified, setIsModified] = useState(false);
@@ -34,7 +27,6 @@ function Notepad() {
 
       const handleOpenNewFile = () => {
         setDialogCount(prevCount => prevCount + 1);
-        setDialogStates(prevStates => [...prevStates, true]);
       };
 
       const handleOpenExistingFile = () => {
@@ -110,14 +102,6 @@ function Notepad() {
           setIsModified(false);
         }
       };
-      
-      const handleCloseDialog = (index) => {
-        setDialogStates(prevStates => {
-          const newStates = [...prevStates];
-          newStates[index] = false;
-          return newStates;
-        });
-      }
 
         dialogContentArray.push(
           <React.Fragment key={dialogId}>

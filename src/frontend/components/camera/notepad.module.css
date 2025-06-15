@@ -1,0 +1,115 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Container styles */
+.container {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    padding: 1rem;
+    width: 30rem;
+    height: 25rem;
+    z-index: 10;
+    position: fixed;
+    left: calc(50% - 15rem);
+    border: 2px solid black;
+    resize: both;
+    font-size: 12px;
+}
+
+/* Notepad textarea styles */
+.notepad {
+    width: calc(100% - 10px);
+    height: 300px;
+    padding: 5px;
+    top: 5vh;
+    font-size: 12px;
+    border: 2px solid black;
+    outline: none;
+    position: relative;
+    resize: none;
+    overflow-x: scroll;
+    overflow-y: scroll;
+}
+
+.notepad:focus {
+    border-color: dodgerblue;
+    box-shadow: 0 0 5px dodgerblue;
+}
+
+/* Button styles */
+.button {
+    padding: 5px 5px;
+    font-size: 12px;
+    background-color: white;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #ccc;
+}
+
+/* Footer styles */
+.footer {
+    margin-top: 20px;
+    text-align: right;
+    font-size: 14px;
+    color: #666;
+}
+
+.footer a {
+    color: dodgerblue;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+
+@font-face {
+    font-family: 'Bubble Bobble';
+    src: url('../../assets/fonts/BubbleBobble.otf') format('opentype');
+  }
+
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'BubbleBobble' !important;
+}
+
+.appIconButton {
+    /* display: flex; */
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: transparent; /* ensures no background color */
+    border: none; /* removes border */
+    padding: 0px; /* or any suitable padding */
+}
+
+.appIconButton img {
+    width: 48px; /* or your desired size */
+    height: auto; /* maintains aspect ratio */
+    padding: 5px;
+}
+
+.appIconButton div {
+    font-size: 16px; /* or your desired font size */
+    color: black; /* or any color based on your theme */
+}

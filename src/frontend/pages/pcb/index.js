@@ -35,6 +35,7 @@ function PCB() {
     const [running, setRunning] = useState(false);  // State to determine if the simulation is running
     const [started, setStarted] = useState(false); // simulation started
     const [paused, setPaused] = useState(false); // simulation paused
+    const [usePredefined, setUsePredefined] = useState(true); // use predefined jobs instead of random ones
     const intervalRef = useRef(null);  // Ref for the simulation interval
     const memorySize = 1024;  // Total memory size for the memory manager
     // useEffect to manage the simulation timer when the running state or simSpeed changes
@@ -87,16 +88,28 @@ function PCB() {
     // Function to create a new simulation
     const newSim = (selectedAlgo) => {
         console.log("newSim")
-        const newJobs = [];
-        for (let i = 0; i < Number(1); i++) {
-            newJobs.push(Job.createRandomJob(i + 1));
+        let newJobs = [];
+        
+        if (!usePredefined) {
+            // Create random jobs if not using predefined
+            for (let i = 0; i < Number(1); i++) {
+                newJobs.push(Job.createRandomJob(i + 1));
+            }
         }
+        
         setJobs(newJobs);
         const algorithm = getAlgorithm(selectedAlgo); // Pass the selected algorithm
         algorithm.quantumTime = Number(quantum);
-        const sim = new Simulation(algorithm, newJobs, memorySize);
+        
+        // Create simulation with predefined jobs flag
+        const sim = new Simulation(algorithm, newJobs, memorySize, usePredefined);
         sim.reset();
         setSimulation(sim);
+    };
+
+    // Function to toggle between predefined and random jobs
+    const toggleJobType = () => {
+        setUsePredefined(!usePredefined);
     };
 
     // Function to start the simulation
@@ -213,16 +226,17 @@ function PCB() {
         
             {/* Scheduling Policy Card */}
             <div className="row-span-12 h-full gap-4" >
-                <Card className="bg-yellow-100/50 justify-center item-center  h-full mb-4">
-                    <CardHeader className="bg-amber-400 text-slate-950  h-[20px] justify-center items-center rounded-t">
+                <Card className="bg-yellow-100/50 justify-center item-center h-full mb-4">
+                    <CardHeader className="bg-amber-400 text-slate-950 h-[20px] justify-center items-center rounded-t">
                         <h6>Policy</h6>
                     </CardHeader>
-                    <CardContent className="justify-center items-center h-[400px] space-y-7 px-4 pt-5">
-                        <div className="w-full flex flex-col items-center">
+                    <CardContent className="justify-center items-center h-[580px] space-y-2 px-3 pt-2 overflow-y-auto">
+                        <div className="w-full flex flex-col">
+                            <span className="text-xs font-medium text-left mb-1 text-slate-800">Algorithm:</span>
                             <div className="flex justify-between items-center w-full">
                                 <ToggleGroup
                                     type="single"
-                                    className="grid cursor-none grid-cols-1 gap-3 w-full"
+                                    className="grid cursor-none grid-cols-1 gap-1.5 w-full"
                                     value={algo}
                                     onChange={handleAlgoChange}
                                     aria-label="Choose Algorithm"
@@ -235,7 +249,7 @@ function PCB() {
                                         running={selectedAlgo}
                                         onClick={handleAlgoChange}
                                     >
-                                        <Button variant="link" value="fcfs" className="w-full h-full">
+                                        <Button variant="link" value="fcfs" className="w-full h-full text-sm py-1 px-0">
                                             First Come, First Serve
                                         </Button>
                                     </ToggleGroupItem>
@@ -247,7 +261,7 @@ function PCB() {
                                         running={selectedAlgo}
                                         onClick={handleAlgoChange}
                                     >
-                                        <Button variant="link" value="sjf" className="w-full h-full">
+                                        <Button variant="link" value="sjf" className="w-full h-full text-sm py-1 px-0">
                                             Shortest Job First
                                         </Button>
                                     </ToggleGroupItem>
@@ -259,7 +273,7 @@ function PCB() {
                                         running={selectedAlgo}
                                         onClick={handleAlgoChange}
                                     >
-                                        <Button variant="link" value="p" className="w-full h-full">
+                                        <Button variant="link" value="p" className="w-full h-full text-sm py-1 px-0">
                                             Priority Scheduling
                                         </Button>
                                     </ToggleGroupItem>
@@ -271,87 +285,176 @@ function PCB() {
                                         running={selectedAlgo}
                                         onClick={handleAlgoChange}
                                     >
-                                        <Button variant="link" value="rr" className="w-full h-full">
+                                        <Button variant="link" value="rr" className="w-full h-full text-sm py-1 px-0">
                                             Round Robin
                                         </Button>
                                     </ToggleGroupItem>
                                 </ToggleGroup>
                             </div>
                         </div>
-                        <div className="flex flex-col items-center w-full mt-3">
-                            <div className="grid grid-cols-1 gap-3 w-full">
+                        
+                        <div className="flex flex-col items-center w-full">
+                            <div className="p-2 rounded-lg w-full">
+                                <div className="flex flex-col">
+                                    <div className="flex rounded-md overflow-hidden w-full" style={{ backgroundColor: '#FFF8E1' }}>
+                                        <button 
+                                            className={`flex-1 py-1 px-3 text-center font-medium transition-all truncate ${
+                                                usePredefined 
+                                                ? "bg-amber-500 text-white" 
+                                                : "bg-transparent text-amber-800"
+                                            }`}
+                                            onClick={toggleJobType}
+                                            disabled={selectedAlgo}
+                                            style={{ fontSize: '15px' }}
+                                        >
+                                            Predefined
+                                        </button>
+                                        <button 
+                                            className={`flex-1 py-1 px-3 text-center font-medium transition-all truncate ${
+                                                !usePredefined 
+                                                ? "bg-amber-500 text-white" 
+                                                : "bg-transparent text-amber-800"
+                                            }`}
+                                            onClick={toggleJobType}
+                                            disabled={selectedAlgo}
+                                            style={{ fontSize: '15px' }}
+                                        >
+                                            Random
+                                        </button>
+                                    </div>
+                                    
+                                    <div className="flex justify-center mt-1">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <g transform="translate(4, 4)">
+                                                <ellipse fill="#FFC107" cx="8" cy="8" rx="6" ry="5"/>
+                                                <path fill="#795548" d="M3,5.5 L1.5,2.5 L3,3 L5,1.5 L6,3 L7.5,2 L8,0 L8.5,2 L10,3 L11,1.5 L13,2.5 L11,5.5 C11,5.5 9.5,9 8,9 C6.5,9 3,5.5 3,5.5 Z"/>
+                                                <path fill="#795548" d="M13,10.5 L14.5,13.5 L13,13 L11,14.5 L10,13 L8.5,14 L8,16 L7.5,14 L6,13 L5,14.5 L3,13.5 L5,10.5 C5,10.5 6.5,7 8,7 C9.5,7 13,10.5 13,10.5 Z"/>
+                                                <circle fill="#212121" cx="6" cy="7.5" r="0.75"/>
+                                                <circle fill="#212121" cx="10" cy="7.5" r="0.75"/>
+                                                <path fill="transparent" stroke="#795548" strokeWidth="0.5" d="M6.5,9.5 C6.5,10 7.2,10.5 8,10.5 C8.8,10.5 9.5,10 9.5,9.5"/>
+                                            </g>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {yieeeRR === true ? (
+                        <div className="flex flex-col items-center justify-center w-full">
+                            <div className="border-2 p-2 rounded-lg w-full bg-white shadow-sm">
+                                <div className="flex flex-col space-y-1">
+                                    <span className="text-sm font-medium text-slate-800">Quantum Time:</span>
+                                    
+                                    {started === false ? (
+                                        <div className="flex items-center">
+                                            <Input 
+                                                value={quantum} 
+                                                onChange={handleInputChange} 
+                                                className="border-2 border-amber-400 bg-white h-8 text-base font-bold text-center rounded-md focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                                                type="number"
+                                                min="1"
+                                                max="20" 
+                                            />
+                                            <div className="ml-2 text-xs text-slate-500">
+                                                <p className="font-medium text-[10px]">Time slice for process</p>
+                                                <p className="text-[10px]">Higher values favor longer jobs</p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center justify-center bg-amber-100 py-2 rounded-md">
+                                            <p><b className="text-xl text-amber-800">{quantum}</b></p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        ) : (
+                            <div className="border-2 p-2 rounded-lg w-full bg-white shadow-sm opacity-70">
+                                <div className="flex flex-col">
+                                    <span className="text-sm font-medium text-slate-500">Quantum Time:</span>
+                                    <div className="bg-slate-100 rounded-md p-1 text-center">
+                                        <p className="text-slate-500 text-xs">Not applicable for current algorithm</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        
+                        <div className="flex flex-col items-center w-full">
+                            <div className="w-full space-y-1.5">
                                 <Button
                                     variant="nohover"
-                                    className="h-10 flex gap-2 bg-green-500 bg-green-600"
+                                    className={`w-full h-9 flex items-center justify-center gap-1 ${
+                                        running || paused 
+                                        ? "bg-gray-300 text-gray-600" 
+                                        : "bg-green-500 hover:bg-green-600 text-white shadow-sm"
+                                    }`}
                                     onClick={() => {
                                         setSelectedAlgo(true);
                                         play(algo);
                                     }}
                                     disabled={running || paused}
                                 >
-                                    <PlayIcon />
-                                    Start
+                                    <PlayIcon className="h-3.5 w-3.5" />
+                                    <span className="font-medium text-xs">Start Simulation</span>
                                 </Button>
-                                {running !== true ? (
+                                
+                                <div className="grid grid-cols-2 gap-1.5">
+                                    {running !== true ? (
+                                        <Button
+                                            variant="nohover"
+                                            className={`h-8 flex items-center justify-center gap-1 ${
+                                                !started 
+                                                ? "bg-gray-300 text-gray-600" 
+                                                : "bg-amber-500 hover:bg-amber-600 text-white shadow-sm"
+                                            }`}
+                                            onClick={resume}
+                                            disabled={!started}
+                                        >
+                                            <PausePlayIcon className="h-3 w-3" />
+                                            <span className="font-medium text-[10px]">Resume</span>
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            variant="nohover"
+                                            className="h-8 flex items-center justify-center gap-1 bg-amber-500 hover:bg-amber-600 text-white shadow-sm"
+                                            onClick={pause}
+                                            disabled={!started}
+                                        >
+                                            <PausePlayIcon className="h-3 w-3" />
+                                            <span className="font-medium text-[10px]">Pause</span>
+                                        </Button>
+                                    )}
+                                    
                                     <Button
                                         variant="nohover"
-                                        className="h-10 flex gap-2 bg-gray-400 bg-orange-600"
-                                        onClick={resume}
+                                        className={`h-8 flex items-center justify-center gap-1 ${
+                                            !started 
+                                            ? "bg-gray-300 text-gray-600" 
+                                            : "bg-red-500 hover:bg-red-600 text-white shadow-sm"
+                                        }`}
+                                        onClick={finish}
                                         disabled={!started}
                                     >
-                                        <PausePlayIcon />
-                                        Resume
+                                        <StopIcon className="h-3 w-3" />
+                                        <span className="font-medium text-[10px]">Complete & Stop</span>
                                     </Button>
-                                ) : (
-                                    <Button
-                                        variant="nohover"
-                                        className="h-10 flex gap-2 bg-gray-400 bg-orange-600"
-                                        onClick={pause}
-                                        disabled={!started}
-                                    >
-                                        <PausePlayIcon />
-                                        Pause
-                                    </Button>
-                                )}
+                                </div>
+                                
                                 <Button
                                     variant="nohover"
-                                    className="h-10 flex gap-2 bg-gray-400 bg-red-600"
-                                    onClick={finish}
-                                    disabled={!started}
-                                >
-                                    <StopIcon />
-                                    Stop & Finish
-                                </Button>
-                                <Button
-                                    variant="nohover"
-                                    className="h-10 flex gap-2 bg-gray-400 bg-lime-500"
+                                    className={`h-8 flex items-center justify-center gap-1 ${
+                                        !started 
+                                        ? "bg-gray-300 text-gray-600" 
+                                        : "bg-lime-500 hover:bg-lime-600 text-white shadow-sm"
+                                    }`}
                                     onClick={reset}
                                     disabled={!started}
                                 >
-                                    <ReloadIcon />
-                                    Clear
+                                    <ReloadIcon className="h-3 w-3" />
+                                    <span className="font-medium text-[10px]">Reset Simulation</span>
                                 </Button>
                             </div>
                         </div>
-                        {yieeeRR === true? (
-                        <div className="flex flex-col items-center justify-center w-full">
-                             <p className="text-xl">Quantum Time</p>
-                                {started === false? (
-                                    <Input 
-                                        value={quantum} 
-                                        onChange={handleInputChange} 
-                                        className="outline-none border-0 border-b-2 border-orange-500 bg-transparent h-12 w-24 text-2xl font-bold rounded-none focus:border-orange-700 text-center"
-                                        type="number" />
-                                ) : (
-                                    <p><b className="text-4xl">{quantum}</b></p>
-                                )}
-                            </div>
-                        ) : (
-                            <div>
-                                <p className="text-gray-500 text-xl">Quantum Time</p>
-                                <p><b className="text-gray-500 text-2xl">Not Applicable</b></p>
-                            </div>
-                        )}
                     </CardContent>
                 </Card>
             </div>

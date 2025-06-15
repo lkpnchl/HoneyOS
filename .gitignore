@@ -30,3 +30,6 @@ honeyOS-wal
 # Packaged files
 /dist
 package.json
+
+.python-version
+
